@@ -1,0 +1,121 @@
+package main
+
+import (
+	"advent_of_code_2024/pkg/aoc"
+	"errors"
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+)
+
+func getFirstDigit(s string) (string, int, error) {
+	for i, c := range s {
+		_, err := strconv.Atoi(string(c))
+		if err == nil {
+			return string(c), i, nil
+		}
+	}
+	return "", 0, errors.New("No digits found")
+}
+
+func getLastDigit(s string) (string, int, error) {
+	for i := len(s) - 1; i >= 0; i-- {
+		_, err := strconv.Atoi(string(s[i]))
+		if err == nil {
+			return string(s[i]), i, nil
+		}
+	}
+	return "", 0, errors.New("No digits found")
+}
+
+func part1(input []string) int {
+	ans := 0
+	for _, s := range input {
+		firstDigit, _, err := getFirstDigit(s)
+		if err != nil {
+			log.Fatal("No digits found")
+		}
+		lastDigit, _, err := getLastDigit(s)
+		if err != nil {
+			log.Fatal("No digits found")
+		}
+		numStr := firstDigit + lastDigit
+		num, err := strconv.Atoi(numStr)
+		if err != nil {
+			log.Fatal("Unable to construct digit from first and last digits")
+		}
+		ans += num
+	}
+	return ans
+}
+
+func part2(input []string) int {
+	ans := 0
+	letterDigits := map[string]string{"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7", "eight": "8", "nine": "9"}
+	for _, s := range input {
+		var firstDigit string
+		var lastDigit string
+
+		firstNumericDigit, firstNumericDigitIdx, err := getFirstDigit(s)
+		firstLetterDigitIdx := len(s)
+		firstLetterDigit := ""
+		for letterDigit, num := range letterDigits {
+			currentFirstLetterDigitIdx := strings.Index(s, letterDigit)
+			if currentFirstLetterDigitIdx != -1 && currentFirstLetterDigitIdx < firstLetterDigitIdx {
+				firstLetterDigitIdx = currentFirstLetterDigitIdx
+				firstLetterDigit = num
+			}
+		}
+		if err != nil {
+			firstDigit = firstLetterDigit
+		} else if firstLetterDigitIdx == len(s) {
+			firstDigit = firstNumericDigit
+		} else if firstLetterDigitIdx < firstNumericDigitIdx {
+			firstDigit = firstLetterDigit
+		} else {
+			firstDigit = firstNumericDigit
+		}
+
+		lastNumericDigit, lastNumericDigitIdx, _ := getLastDigit(s)
+		lastLetterDigitIdx := -1
+		lastLetterDigit := ""
+		for letterDigit, num := range letterDigits {
+			currentLastLetterDigitIdx := strings.LastIndex(s, letterDigit)
+			if currentLastLetterDigitIdx != -1 && currentLastLetterDigitIdx > lastLetterDigitIdx {
+				lastLetterDigitIdx = currentLastLetterDigitIdx
+				lastLetterDigit = num
+			}
+		}
+
+		if err != nil {
+			lastDigit = lastLetterDigit
+		} else if lastLetterDigitIdx == -1 {
+			lastDigit = lastNumericDigit
+		} else if lastLetterDigitIdx > lastNumericDigitIdx {
+			lastDigit = lastLetterDigit
+		} else {
+			lastDigit = lastNumericDigit
+		}
+		numStr := firstDigit + lastDigit
+		num, err := strconv.Atoi(numStr)
+		if err != nil {
+			log.Fatal("Unable to construct digit from first and last digits")
+		}
+		ans += num
+	}
+	return ans
+}
+
+func main() {
+	day := 1
+	input, err := aoc.GetInputForDay(day)
+	if err != nil {
+		log.Fatalf("failed to get input for day %d with error: %v", day, err)
+	}
+
+	lines := strings.Split(strings.TrimSpace(input), "\n")
+
+	ans := part2(lines)
+	fmt.Printf("Part 2: %d\n", ans)
+}
