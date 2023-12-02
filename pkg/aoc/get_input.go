@@ -44,7 +44,20 @@ func fetchInputForDay(day int) (string, error) {
 	return string(body), nil
 }
 
-func getInputForDay(day int) (string, error) {
+func getSampleFile(day int) (string, error) {
+	fileName := fmt.Sprintf("./cmd/day%d/sample.txt", day)
+	if fileExists(fileName) {
+		log.Printf("Reading sample input file for day %d", day)
+		input, err := os.ReadFile(fileName)
+		return string(input), err
+	}
+	return "", errors.New("sample file does not exist. please create it first")
+}
+
+func getInputForDay(day int, isSample bool) (string, error) {
+	if isSample {
+		return getSampleFile(day)
+	}
 	fileName := fmt.Sprintf("./cmd/day%d/input.txt", day)
 	if fileExists(fileName) {
 		log.Printf("Input file for day %d already exists. Fetching input from file...", day)
@@ -69,16 +82,16 @@ func getInputForDay(day int) (string, error) {
 	return input, nil
 }
 
-func GetInputForDay(day int) string {
-	input, err := getInputForDay(day)
+func GetInputForDay(day int, isSample bool) string {
+	input, err := getInputForDay(day, isSample)
 	if err != nil {
 		log.Fatalf("failed to get input for day %d", day)
 	}
 	return strings.TrimSpace(input)
 }
 
-func GetInputLinesForDay(day int) []string {
-	input, err := getInputForDay(day)
+func GetInputLinesForDay(day int, isSample bool) []string {
+	input, err := getInputForDay(day, isSample)
 	if err != nil {
 		log.Fatalf("failed to get input for day %d", day)
 	}
