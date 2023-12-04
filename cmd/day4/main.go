@@ -3,9 +3,9 @@ package main
 import (
 	"advent_of_code_2024/pkg/aoc"
 	"fmt"
-	"regexp"
 	"slices"
 	"strconv"
+	"strings"
 )
 
 func Map[T any, U any](l []T, f func(t T) U) []U {
@@ -26,30 +26,6 @@ type Card struct {
 	NumbersOnHand  []int
 }
 
-func parseLineIntoCard(line string) Card {
-	re := regexp.MustCompile(`\s+`)
-	tokens := regexp.MustCompile(`\s*:\s*`).Split(line, -1)
-	numbers := regexp.MustCompile(`\s*\|\s*`).Split(tokens[1], -1)
-	winningNumbers := Map(re.Split(numbers[0], -1), StrToInt)
-	numbersOnHand := Map(re.Split(numbers[1], -1), StrToInt)
-	slices.Sort(numbersOnHand)
-	return Card{WinningNumbers: winningNumbers, NumbersOnHand: numbersOnHand}
-}
-
-func (this *Card) CalculateTotalPoints() int {
-	numWinningNumbers := 0
-	for _, winningNumber := range this.WinningNumbers {
-		_, found := slices.BinarySearch(this.NumbersOnHand, winningNumber)
-		if found {
-			numWinningNumbers++
-		}
-	}
-	if numWinningNumbers == 0 {
-		return 0
-	}
-	return (1 << (numWinningNumbers - 1))
-}
-
 func (this *Card) GetNumWinningNumbers() int {
 	numWinningNumbers := 0
 	for _, winningNumber := range this.WinningNumbers {
@@ -61,11 +37,23 @@ func (this *Card) GetNumWinningNumbers() int {
 	return numWinningNumbers
 }
 
+func parseLineIntoCard(line string) Card {
+	tokens := strings.Split(line, ":")
+	numbers := strings.Split(tokens[1], "|")
+	winningNumbers := Map(strings.Fields(numbers[0]), StrToInt)
+	numbersOnHand := Map(strings.Fields(numbers[1]), StrToInt)
+	slices.Sort(numbersOnHand)
+	return Card{WinningNumbers: winningNumbers, NumbersOnHand: numbersOnHand}
+}
+
 func solvePart1(lines []string) int {
 	ans := 0
 	for _, line := range lines {
 		card := parseLineIntoCard(line)
-		ans += card.CalculateTotalPoints()
+		numWinningNumbers := card.GetNumWinningNumbers()
+		if numWinningNumbers > 0 {
+			ans += (1 << (numWinningNumbers - 1))
+		}
 	}
 	return ans
 }
