@@ -4,22 +4,8 @@ import (
 	"advent_of_code_2024/pkg/aoc"
 	"fmt"
 	"slices"
-	"strconv"
 	"strings"
 )
-
-func Map[T any, U any](l []T, f func(t T) U) []U {
-	ret := make([]U, len(l))
-	for i, a := range l {
-		ret[i] = f(a)
-	}
-	return ret
-}
-
-func StrToInt(s string) int {
-	n, _ := strconv.Atoi(s)
-	return n
-}
 
 type Card struct {
 	WinningNumbers []int
@@ -40,8 +26,8 @@ func (this *Card) GetNumWinningNumbers() int {
 func parseLineIntoCard(line string) Card {
 	tokens := strings.Split(line, ":")
 	numbers := strings.Split(tokens[1], "|")
-	winningNumbers := Map(strings.Fields(numbers[0]), StrToInt)
-	numbersOnHand := Map(strings.Fields(numbers[1]), StrToInt)
+	winningNumbers := aoc.MapStrToInt(strings.Fields(numbers[0]))
+	numbersOnHand := aoc.MapStrToInt(strings.Fields(numbers[1]))
 	slices.Sort(numbersOnHand)
 	return Card{WinningNumbers: winningNumbers, NumbersOnHand: numbersOnHand}
 }

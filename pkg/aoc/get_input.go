@@ -1,6 +1,7 @@
 package aoc
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
@@ -88,6 +89,16 @@ func GetInputForDay(day int, isSample bool) string {
 		log.Fatalf("failed to get input for day %d", day)
 	}
 	return strings.TrimSpace(input)
+}
+
+func GetInputScannerForDay(day int, isSample bool) *bufio.Scanner {
+	input, err := getInputForDay(day, isSample)
+	if err != nil {
+		log.Fatalf("failed to get input for day %d", day)
+	}
+	input = strings.TrimSpace(input)
+	reader := strings.NewReader(input)
+	return bufio.NewScanner(reader)
 }
 
 func GetInputLinesForDay(day int, isSample bool) []string {
