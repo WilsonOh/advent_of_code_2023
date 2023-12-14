@@ -86,7 +86,7 @@ func getInputForDay(day int, isSample bool) (string, error) {
 func GetInputForDay(day int, isSample bool) string {
 	input, err := getInputForDay(day, isSample)
 	if err != nil {
-		log.Fatalf("failed to get input for day %d", day)
+		log.Fatalf("%v. Failed to get input for day %d.", err, day)
 	}
 	return strings.TrimSpace(input)
 }
@@ -94,7 +94,7 @@ func GetInputForDay(day int, isSample bool) string {
 func GetInputScannerForDay(day int, isSample bool) *bufio.Scanner {
 	input, err := getInputForDay(day, isSample)
 	if err != nil {
-		log.Fatalf("failed to get input for day %d", day)
+		log.Fatalf("%v. Failed to get input for day %d.", err, day)
 	}
 	input = strings.TrimSpace(input)
 	reader := strings.NewReader(input)
@@ -104,7 +104,7 @@ func GetInputScannerForDay(day int, isSample bool) *bufio.Scanner {
 func GetInputLinesForDay(day int, isSample bool) []string {
 	input, err := getInputForDay(day, isSample)
 	if err != nil {
-		log.Fatalf("failed to get input for day %d", day)
+		log.Fatalf("%v. Failed to get input for day %d.", err, day)
 	}
 	return strings.Split(strings.TrimSpace(input), "\n")
 }
